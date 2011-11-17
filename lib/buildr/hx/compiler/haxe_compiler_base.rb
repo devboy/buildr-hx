@@ -23,7 +23,6 @@ module Buildr
         end
 
         def needed?(sources, target, dependencies)
-          puts "deps:", dependencies
           return true unless File.exist?(@project.get_hx_output(is_test(sources,target,dependencies)))
           source_files = Dir.glob(sources.collect{ |source| "#{source}/**/*"})
           dep_files = dependencies.collect{ |dep|
