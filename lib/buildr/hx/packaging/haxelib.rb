@@ -36,7 +36,7 @@ module Buildr
             include *@project.compile.sources.collect { |src| File.join(src, "**", "*") }
             xml = @project._("haxelib.xml")
             File.open(xml, 'w') {|f| f.write(haxelib_xml) }
-            include xml, :as => "haxelib.xml"
+            include xml
           end
         end
 
