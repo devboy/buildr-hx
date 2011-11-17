@@ -1,10 +1,12 @@
 module Buildr
   module Haxe
     module Compiler
-      class HXPHP < HaxeCompilerBase
+      class HXXML < HaxeCompilerBase
 
         specify :language => :haxe,
-                :sources => :hx, :source_ext => :hx
+                :sources => :hx, :source_ext => :hx,
+                :target_ext => "xml",
+                :packaging => :xml
 
         COMPILE_OPTIONS << :version
 
@@ -14,7 +16,7 @@ module Buildr
         end
 
         def compiler_args
-          [ "-php #{@output}" ]
+          [ "-xml #{@output}" ]
         end
 
       end
