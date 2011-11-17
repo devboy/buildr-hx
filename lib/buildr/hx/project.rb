@@ -30,7 +30,7 @@ class Buildr::Project
     options = compile_task.options
     main = options[:main].to_s
     return compile_task.options[:output] if compile_task.options.has_key? :output
-    return "#{target}/#{File.basename(main, File.extname(main))}.#{compile_task.packaging.to_s}" unless compile_task.packaging.nil?
+    return "#{target}/#{main}.#{compile_task.packaging.to_s}" unless compile_task.packaging.nil?
     fail("Could not guess output file for #{name}")
   end
 

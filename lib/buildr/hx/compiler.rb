@@ -23,6 +23,8 @@
 require File.dirname(__FILE__) + '/compiler/haxe_compiler_base'
 require File.dirname(__FILE__) + '/compiler/hxswf'
 require File.dirname(__FILE__) + '/compiler/hxjs'
+require File.dirname(__FILE__) + '/compiler/hxneko'
 
 Buildr::Compiler << Buildr::Haxe::Compiler::HXSWF
 Buildr::Compiler << Buildr::Haxe::Compiler::HXJS
+Buildr::Compiler << Buildr::Haxe::Compiler::HXNeko
