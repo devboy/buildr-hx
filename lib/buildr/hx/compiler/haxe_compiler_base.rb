@@ -15,6 +15,7 @@ module Buildr
           check_options options, COMPILE_OPTIONS
           args = ["haxe"]
           args += generate_source_args sources
+          args += generate_dependency_args dependencies
           args += base_compiler_args
           args += compiler_args if respond_to? :compiler_args
           unless Buildr.application.options.dryrun
@@ -44,6 +45,13 @@ module Buildr
 
         def generate_source_args sources
           sources.collect { |source| "-cp #{source}"}
+        end
+
+        def generate_dependency_args dependencies
+          dependencies.collect { |dep|
+            spec = HaxeLib.path_to_spec(dep)
+            spec ? "-lib #{spec[:id]}:#{spec[:version]}" : "-cp #{dep}"
+          }
         end
 
         def is_test( sources, target, dependencies )

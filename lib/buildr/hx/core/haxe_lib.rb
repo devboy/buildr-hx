@@ -9,6 +9,12 @@ class HaxeLib < Rake::FileTask
       File.join( home, id, version.gsub(".",",") )
     end
 
+    def path_to_spec path
+      id, version = path.gsub(home,"").split(File::SEPARATOR)
+      return nil unless id && version && path.include?(home)
+      {:id => id, :version => version.gsub(",",".")}
+    end
+
     def lookup spec
       id, version = spec.split(":")
       task = HaxeLib.define_task( spec_to_path spec )
@@ -49,7 +55,7 @@ end
 module Buildr
   def haxelib spec
     haxelib = HaxeLib.lookup(spec)
-    haxelib.invoke
+    #haxelib.invoke
     haxelib
   end
 end
