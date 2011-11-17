@@ -1,7 +1,6 @@
-# encoding: utf-8
-
 require 'rubygems'
 require 'bundler'
+
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
@@ -12,35 +11,39 @@ end
 require 'rake'
 
 require 'jeweler'
+require File.dirname(__FILE__)+"/rake/jeweler_prerelease_tasks"
 Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "buildr-hx"
   gem.homepage = "http://github.com/devboy/buildr-hx"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
-  gem.email = "dominic.graefen@gmail.com"
-  gem.authors = ["devboy"]
-  # dependencies defined in Gemfile
+  gem.summary = "Buildr extension to allow ActionScript3/Flex development."
+  gem.description = "Build like you code - now supporting ActionScript 3 & Flex"
+  gem.email = "dominic @nospam@ devboy.org"
+  gem.authors = ["Dominic Graefen"]
+  gem.add_runtime_dependency("buildr",">=1.4.6")
 end
 Jeweler::RubygemsDotOrgTasks.new
+Jeweler::PrereleaseTasks.new
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
+require 'rspec/core'
+require 'rspec/core/rake_task'
+require 'ci/reporter/rake/rspec'
+
+ENV["CI_REPORTS"] ||= File.expand_path( File.join( File.dirname(__FILE__), "test", "report" ) )
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-  test.rcov_opts << '--exclude "gems/*"'
+task :spec => "ci:setup:rspec"
+
+RSpec::Core::RakeTask.new(:rcov) do |spec|
+  spec.pattern = 'spec/**/*_spec.rb'
+  spec.rcov = true
 end
 
-task :default => :test
+task :test => :spec
+task :default => :spec
+
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
