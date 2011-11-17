@@ -3,7 +3,7 @@ module Buildr
     module Compiler
       class HaxeCompilerBase < Buildr::Compiler::Base
 
-        COMPILE_OPTIONS = [:warnings, :debug, :args, :output]
+        COMPILE_OPTIONS = [:warnings, :debug, :args, :main, :output]
 
         def initialize(project, options)
           super
@@ -14,6 +14,7 @@ module Buildr
         def compile(sources, target, dependencies)
           check_options options, COMPILE_OPTIONS
           unless Buildr.application.options.dryrun
+
           end
         end
 
