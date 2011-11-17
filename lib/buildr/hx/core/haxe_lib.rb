@@ -50,6 +50,10 @@ class HaxeLib < Rake::FileTask
     "#{id}:#{version}"
   end
 
+  def to_spec_hash
+    {:id => @id, :version => @version}
+  end
+
 end
 
 module Buildr

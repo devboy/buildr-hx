@@ -26,51 +26,57 @@ require "fileutils"
 module Buildr
   module Haxe
     module Packaging
+      include Extension
 
       class HaxelibTask < Buildr::ZipTask
-
-        include Extension
-
-        attr_writer :target_swc, :src_swc
-        attr_reader :target_swc, :src_swc
 
         def initialize(*args) #:nodoc:
           super
           enhance do
-            fail "File not found: #{src_swc}" unless File.exists? src_swc
-            merge src_swc
+            include *@project.compile.sources.collect { |src| File.join(src, "**", "*") }
+            xml = @project._("haxelib.xml")
+            File.open(xml, 'w') {|f| f.write(haxelib_xml) }
+            include xml, :as => "haxelib.xml"
           end
         end
 
-        def needed?
-          return true unless File.exists?(target_swc)
-          File.stat(src_swc).mtime > File.stat(target_swc).mtime
+        attr_accessor :url, :license, :tags, :user
+
+        protected
+
+        def associate(project)
+          @project = project
         end
 
-        first_time do
-          desc 'create swc package task'
-          Project.local_task('package_swc')
-        end
-
-        before_define do |project|
-          HaxelibTask.define_task('package_swc').tap do |package_swc|
-            package_swc
+        def haxelib_xml
+          buffer =''
+          xml = Builder::XmlMarkup.new(:target=>buffer, :indent => 2)
+          xml.project(:name => @project.name, :url => url, :license => license) do
+            xml.description @project.comment
+            xml.version(@project.version, :name => @project.version)
+            @tags.each { |tag| xml.tag :v => tag }
+            xml.user :name => @user
+            haxelib_dependencies.each{ |dep| xml.depends :name => dep[:id], :version => dep[:version] }
           end
+          buffer
+        end
+
+        def haxelib_dependencies
+          haxelib_deps = []
+          @project.compile.dependencies.each{ |dep| haxelib_deps << dep.to_spec_hash if dep.is_a? HaxeLib }
+          haxelib_deps
         end
 
       end
 
-      def package_swc(&block)
-        task("package_haxelib").enhance &block
+      def package_as_haxelib(file_name)
+        HaxelibTask.define_task(file_name).tap do |haxelib|
+          haxelib.send :associate, self
+        end
       end
 
-      protected
-
-      def package_as_swc(file_name)
-        HaxelibTask.define_task(file_name).tap do |swc|
-          swc.src_swc = get_as3_output
-          swc.target_swc = file_name
-        end
+      def package_as_haxelib_spec(spec)
+        spec.merge :type=>:zip
       end
 
     end
