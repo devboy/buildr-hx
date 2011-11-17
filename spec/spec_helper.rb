@@ -44,7 +44,7 @@ unless defined?(SpecHelpers)
     require path
   end
   #require 'buildr'
-  require File.dirname( __FILE__) + '/../lib/buildr/as3'
+  require File.dirname( __FILE__) + '/../lib/buildr/hx'
   # load ecj
   #require 'buildr/java/ecj'
   #Make ecj appear as a compiler that doesn't apply:
