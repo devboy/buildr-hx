@@ -1,14 +1,9 @@
 module Buildr
   module Haxe
     module Compiler
-      class HXSWF10 < Buildr::Compiler::Base
+      class HaxeCompilerBase < Buildr::Compiler::Base
 
-        specify :language => :haxe,
-                :sources => :hx, :source_ext => :hx,
-                :target_ext => "swf",
-                :packaging => :swf
-
-        COMPILE_OPTIONS = [:warnings, :debug, :args, :flexsdk, :apparat, :output]
+        COMPILE_OPTIONS = [:warnings, :debug, :args, :output]
 
         def initialize(project, options)
           super

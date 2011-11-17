@@ -20,6 +20,7 @@
 # THE SOFTWARE.
 #
 
-require "#{File.dirname(__FILE__)}/compiler/hxswf10"
+require File.dirname(__FILE__) + '/compiler/haxe_compiler_base'
+require File.dirname(__FILE__) + '/compiler/hxswf'
 
-Buildr::Compiler << Buildr::Haxe::Compiler::HXSWF10
+Buildr::Compiler << Buildr::Haxe::Compiler::HXSWF
