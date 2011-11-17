@@ -27,6 +27,7 @@ require File.dirname(__FILE__) + '/compiler/hxneko'
 require File.dirname(__FILE__) + '/compiler/hxphp'
 require File.dirname(__FILE__) + '/compiler/hxxml'
 require File.dirname(__FILE__) + '/compiler/hxas3'
+require File.dirname(__FILE__) + '/compiler/hxcpp'
 
 Buildr::Compiler << Buildr::Haxe::Compiler::HXSWF
 Buildr::Compiler << Buildr::Haxe::Compiler::HXJS
@@ -34,3 +35,4 @@ Buildr::Compiler << Buildr::Haxe::Compiler::HXNeko
 Buildr::Compiler << Buildr::Haxe::Compiler::HXPHP
 Buildr::Compiler << Buildr::Haxe::Compiler::HXXML
 Buildr::Compiler << Buildr::Haxe::Compiler::HXAS3
+Buildr::Compiler << Buildr::Haxe::Compiler::HXCPP
