@@ -48,6 +48,8 @@ end
 
 module Buildr
   def haxelib spec
-    HaxeLib.lookup(spec)
+    haxelib = HaxeLib.lookup(spec)
+    haxelib.invoke
+    haxelib
   end
 end
