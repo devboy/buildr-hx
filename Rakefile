@@ -16,8 +16,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "buildr-hx"
   gem.homepage = "http://github.com/devboy/buildr-hx"
   gem.license = "MIT"
-  gem.summary = "Buildr extension to allow ActionScript3/Flex development."
-  gem.description = "Build like you code - now supporting ActionScript 3 & Flex"
+  gem.summary = "Buildr extension to allow haXe development."
+  gem.description = "Build like you code - now supporting haXe"
   gem.email = "dominic @nospam@ devboy.org"
   gem.authors = ["Dominic Graefen"]
   gem.add_runtime_dependency("buildr",">=1.4.6")
