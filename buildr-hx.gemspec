@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "buildr-hx"
-  s.version = "0.0.1.pre"
+  s.version = "0.0.2.pre"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dominic Graefen"]
@@ -24,12 +24,19 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "buildr-hx.gemspec",
     "buildr-hx.iml",
-    "lib/buildr-hx.rb",
+    "lib/buildr/hx.rb",
+    "lib/buildr/hx/compiler.rb",
+    "lib/buildr/hx/compiler/haxe_compiler_base.rb",
+    "lib/buildr/hx/compiler/hxjs.rb",
+    "lib/buildr/hx/compiler/hxswf.rb",
+    "lib/buildr/hx/project.rb",
     "rake/jeweler.rb",
     "rake/jeweler_prerelease_tasks.rb",
     "rake/pre_release_gemspec.rb",
     "rake/pre_release_to_git.rb",
+    "spec/hx/compiler/hxswf_spec.rb",
     "spec/sandbox.rb",
     "spec/spec_helper.rb"
   ]
@@ -39,6 +46,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = "1.8.11"
   s.summary = "Buildr extension to allow haXe development."
   s.test_files = [
+    "spec/hx/compiler/hxswf_spec.rb",
     "spec/sandbox.rb",
     "spec/spec_helper.rb"
   ]
