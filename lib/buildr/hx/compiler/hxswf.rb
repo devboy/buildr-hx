@@ -10,7 +10,7 @@ module Buildr
 
         COMPILE_OPTIONS << :version
 
-        def compile(sources, target, dependencies) #:nodoc:
+        def compile(sources, target, dependencies)
           @output = @project.get_hx_output(is_test(sources,target,dependencies))
           super
         end
