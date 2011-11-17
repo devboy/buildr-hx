@@ -48,10 +48,28 @@ module Buildr
         end
 
         def generate_dependency_args dependencies
+          args = []
           dependencies.collect { |dep|
             spec = HaxeLib.path_to_spec(dep)
-            spec ? "-lib #{spec[:id]}:#{spec[:version]}" : "-cp #{dep}"
+            if spec
+              args << "-lib #{spec[:id]}:#{spec[:version]}"
+            elsif File.extname(dep) == ".zip" && Buildr.zip(dep).contain?("haxelib.xml")
+              xml = Zip::ZipFile.open(dep) { |zip| zip.file.read("haxelib.xml") }
+              require 'rexml/document'
+              doc = REXML::Document.new(xml)
+              id = doc.root.attribute("name")
+              version = doc.root.elements['version'].attribute("name")
+              fail "Could not install #{id}:#{version}." unless install_haxelib_zip dep
+              args << "-lib #{id}:#{version}"
+            else
+              args << "-cp #{dep}"
+            end
           }
+          args
+        end
+
+        def install_haxelib_zip zip
+          system "haxelib test #{zip}"
         end
 
         def is_test( sources, target, dependencies )

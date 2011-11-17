@@ -51,7 +51,7 @@ module Buildr
         def haxelib_xml
           buffer =''
           xml = Builder::XmlMarkup.new(:target=>buffer, :indent => 2)
-          xml.project(:name => @project.name, :url => url, :license => license) do
+          xml.project(:name => @project.name.gsub(":","-"), :url => url, :license => license) do
             xml.description @project.comment
             xml.version(@project.version, :name => @project.version)
             @tags.each { |tag| xml.tag :v => tag }
