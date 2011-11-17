@@ -1,7 +1,7 @@
 module Buildr
   module Haxe
     module Compiler
-      class SWF10 < Buildr::Compiler::Base
+      class HXSWF10 < Buildr::Compiler::Base
 
         specify :language => :haxe,
                 :sources => :hx, :source_ext => :hx,
