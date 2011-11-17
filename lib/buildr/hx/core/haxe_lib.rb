@@ -33,7 +33,7 @@ class HaxeLib < Rake::FileTask
   end
 
   def download
-    `haxelib install #{id} #{version}`
+    fail( "Could not download #{to_spec}") unless system "haxelib install #{id} #{version}"
   end
 
   def download_needed?
