@@ -13,6 +13,7 @@ module Buildr
 
         def compile(sources, target, dependencies)
           check_options options, COMPILE_OPTIONS
+          @output = @project.get_hx_output(is_test(sources,target,dependencies))
           args = ["haxe"]
           args += generate_source_args sources
           args += generate_dependency_args dependencies
