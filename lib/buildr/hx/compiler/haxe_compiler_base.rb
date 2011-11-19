@@ -39,7 +39,6 @@ module Buildr
         def base_compiler_args #:nodoc:
           args = []
           args << "-main #{options[:main]}"
-          args << '-prompt' if options[:warnings]
           args << '-debug' if options[:debug]
           args + Array(options[:args])
         end

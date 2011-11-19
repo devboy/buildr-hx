@@ -20,7 +20,7 @@
 # THE SOFTWARE.
 #
 
-require 'buildr'
+require 'buildr'                                                                                       ¡
 require "fileutils"
 
 module Buildr
