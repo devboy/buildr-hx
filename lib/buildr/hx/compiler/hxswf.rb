@@ -8,11 +8,15 @@ module Buildr
                 :target_ext => "swf",
                 :packaging => :swf
 
-        COMPILE_OPTIONS << :version
+        COMPILE_OPTIONS << :swfversion << :swfheader << :flashstrict
 
         def compiler_args
-          [ "-swf #{@output}",
-            "-swf-version #{options[:version]}" ]
+          args = []
+          args << "-swf #{@output}"
+          args << "-swf-version #{options[:swfversion]}"
+          args << "-swf-header #{options[:swfheader]}" unless options[:swfheader].nil?
+          args << "--flash-strict" if options[:flashstrict]
+          args
         end
 
       end
