@@ -20,6 +20,7 @@
 # THE SOFTWARE.
 #
 require File.dirname(__FILE__)+"/packaging/haxelib"
+require File.dirname(__FILE__)+"/packaging/hxlib"
 
 class Buildr::Project
   include Buildr::Haxe::Packaging

@@ -6,6 +6,7 @@ class HaxeLib < Rake::FileTask
 
     def spec_to_path spec
       id, version = spec.split(":")
+      fail("No version number provided for haxelib '#{id}'!") if version.nil?
       File.join( home, id, version.gsub(".",",") )
     end
 
@@ -58,7 +59,6 @@ end
 
 module Buildr
   def haxelib spec
-    haxelib = HaxeLib.lookup(spec)
-    haxelib
+    HaxeLib.lookup(spec)
   end
 end
