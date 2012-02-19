@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "buildr-hx"
-  s.version = "0.0.9.pre"
+  s.version = "0.0.12.pre"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dominic Graefen"]
-  s.date = "2011-11-19"
+  s.date = "2012-02-19"
   s.description = "Build like you code - now supporting haXe"
   s.email = "dominic @nospam@ devboy.org"
   s.extra_rdoc_files = [
@@ -41,7 +41,7 @@ Gem::Specification.new do |s|
     "lib/buildr/hx/core/haxe_lib.rb",
     "lib/buildr/hx/packaging.rb",
     "lib/buildr/hx/packaging/haxelib.rb",
-    "lib/buildr/hx/project.rb",
+    "lib/buildr/hx/packaging/hxlib.rb",
     "rake/jeweler.rb",
     "rake/jeweler_prerelease_tasks.rb",
     "rake/pre_release_gemspec.rb",
