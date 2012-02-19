@@ -14,16 +14,18 @@ module Buildr
         def compile(sources, target, dependencies)
           check_options options, COMPILE_OPTIONS
           @output = get_output_file(target)
+          is_test = is_test?(sources, target, dependencies)
           args = ["haxe"]
+          sources += @project.compile.sources.map(&:to_s) if is_test
           args += generate_source_args sources
           args += generate_dependency_args dependencies
           args += base_compiler_args
           args += compiler_args if respond_to? :compiler_args
           unless Buildr.application.options.dryrun
-            create_hxml args, is_test(sources,target,dependencies)
+            create_hxml args, is_test
             appwd = Dir.pwd
             Dir.chdir @project.base_dir
-            sh args.join " "
+            fail("Compilation failed!") unless sh args.join " "
             Dir.chdir appwd
           end
         end
@@ -82,17 +84,19 @@ module Buildr
           system "haxelib test #{zip}"
         end
 
-        def is_test(sources, target, dependencies)
+        def is_test?(sources, target, dependencies)
           test_task = @project.test.compile
           sources==test_task.sources && dependencies==test_task.dependencies.collect { |dep| dep.to_s } && target==test_task.target.to_s
         end
 
         def get_output_file target
-          File.join(target.to_s, options["output"] || "#{@project.name.split(":").last}.#{self.class.packaging.to_s}")
+          file = "#{@project.name.split(":").last}.#{self.class.packaging.to_s}"
+          file = options[:output] unless options[:output].nil?
+          File.join(target.to_s, file)
         end
 
-        def create_hxml( args, test )
-          file = File.join(@project.base_dir, options[:hxml] || test ? "test.hxml" : "compile.hxml")
+        def create_hxml( args, is_test )
+          file = File.join(@project.base_dir, options[:hxml] || is_test ? "test.hxml" : "compile.hxml")
           puts "Creating hxml '#{file}'"
           with_path = ["cp", "swf-lib", "swf", "js", "as3", "cpp", "neko", "xml", "swf9", "resource"].map{|p|"-#{p}"}
           File.open(file, 'w') {|f| f.write(
