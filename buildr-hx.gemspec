@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "buildr-hx"
-  s.version = "0.0.12.pre"
+  s.version = "0.0.14.pre"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dominic Graefen"]
@@ -42,6 +42,9 @@ Gem::Specification.new do |s|
     "lib/buildr/hx/packaging.rb",
     "lib/buildr/hx/packaging/haxelib.rb",
     "lib/buildr/hx/packaging/hxlib.rb",
+    "lib/buildr/hx/test.rb",
+    "lib/buildr/hx/test/base.rb",
+    "lib/buildr/hx/test/munit.rb",
     "rake/jeweler.rb",
     "rake/jeweler_prerelease_tasks.rb",
     "rake/pre_release_gemspec.rb",
