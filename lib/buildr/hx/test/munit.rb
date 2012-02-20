@@ -1,5 +1,6 @@
 require 'buildr'
 require 'fileutils'
+require 'pathname'
 require "rexml/document"
 
 module Buildr
@@ -63,12 +64,12 @@ module Buildr
           file = File.join(task.project.base_dir, ".munit")
           puts "Creating munit config '#{file}'"
           File.open(file, 'w') { |f| f.write(
-              "version=#{options[:version].nil? ? DEFAULT_VERSION : options[:version]}
-               src=#{task.project.path_to(:source, :test, :hx)}
-               bin=#{task.project.test.compile.target}
-               report=#{task.project.path_to(:reports, :munit)}
-               hxml=#{get_hxml_file}
-               classPaths=#{task.project.compile.sources.map(&:to_s).join(',')}"
+              "version=#{options[:version].nil? ? DEFAULT_VERSION : options[:version]}\n" +
+              "src=#{relative_path task.project.path_to(:source, :test, :hx), task.project.base_dir}\n" +
+              "bin=#{relative_path task.project.test.compile.target.to_s, task.project.base_dir}\n" +
+              "report=#{relative_path task.project.path_to(:reports, :munit), task.project.base_dir}\n" +
+              "hxml=#{relative_path get_hxml_file, task.project.base_dir}\n" +
+              "classPaths=#{task.project.compile.sources.map(&:to_s).map{|s| relative_path s, task.project.base_dir}.join(',')}"
           ) }
         end
 
@@ -76,6 +77,10 @@ module Buildr
           file = "test.hxml"
           file = task.project.test.compile.options[:hxml] unless task.project.test.compile.options[:hxml].nil?
           File.join(task.project.base_dir, file)
+        end
+
+        def relative_path path, from
+          Pathname.new(path).relative_path_from(Pathname.new(from)).to_s
         end
 
       end
