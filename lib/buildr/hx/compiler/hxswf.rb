@@ -8,7 +8,7 @@ module Buildr
                 :target_ext => "swf",
                 :packaging => :swf
 
-        COMPILE_OPTIONS << :swfversion << :swfheader << :flashstrict
+        COMPILE_OPTIONS << :swfversion << :swfheader << :flashstrict << :apparat
 
         def compiler_args
           args = []
