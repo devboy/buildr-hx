@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "buildr-hx"
-  s.version = "0.0.14.pre"
+  s.version = "0.0.15.pre"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dominic Graefen"]
-  s.date = "2012-02-19"
+  s.date = "2012-03-28"
   s.description = "Build like you code - now supporting haXe"
   s.email = "dominic @nospam@ devboy.org"
   s.extra_rdoc_files = [
@@ -56,7 +56,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/devboy/buildr-hx"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.11"
+  s.rubygems_version = "1.8.21"
   s.summary = "Buildr extension to allow haXe development."
   s.test_files = [
     "spec/hx/compiler/hxswf_spec.rb",
