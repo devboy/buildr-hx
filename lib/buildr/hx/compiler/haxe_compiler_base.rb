@@ -9,6 +9,7 @@ module Buildr
           super
           options[:debug] = Buildr.options.debug if options[:debug].nil?
           options[:warnings] ||= true
+          options[:flags] ||= []
         end
 
         def compile(sources, target, dependencies)
@@ -47,6 +48,7 @@ module Buildr
           args << "-main #{options[:main]}"
           args << '-debug' if options[:debug]
           args += options[:resources].map{|id,path| "-resource #{path}@#{id.to_s}"} unless options[:resources].nil?
+          options[:flags] << "ENV_#{Buildr.environment.upcase}"
           args += options[:flags].map{|flag| "-D #{flag.to_s}"} unless options[:flags].nil?
           args + Array(options[:args])
         end
