@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "buildr-hx"
-  s.version = "0.0.19.pre"
+  s.version = "0.0.20.pre"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dominic Graefen"]
-  s.date = "2012-04-03"
+  s.date = "2012-04-11"
   s.description = "Build like you code - now supporting haXe"
   s.email = "dominic @nospam@ devboy.org"
   s.extra_rdoc_files = [
