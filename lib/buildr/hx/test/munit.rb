@@ -12,17 +12,7 @@ module Buildr
 
         def initialize(test_task, options)
           super
-          generate = Rake::Task.define_task(:generate_files) do
-            create_munit_config
-            appwd = Dir.pwd
-            Dir.chdir task.project.base_dir
-            cmd = "haxelib run munit gen"
-            fail "Problems...oh noes!" unless system cmd
-            Dir.chdir appwd
-          end
-          @task.compile.enhance [:generate_files] do
-            generate.reenable
-          end
+          @task.compile.from generate_test_suites
         end
 
         def tests(dependencies) #:nodoc:
@@ -43,7 +33,6 @@ module Buildr
         def run(tests, dependencies) #:nodoc:
 
           unless Buildr.application.options.dryrun
-            create_munit_config
             appwd = Dir.pwd
             Dir.chdir task.project.base_dir
 
@@ -52,7 +41,7 @@ module Buildr
             cmd << " -keep-browser-alive" if options[:keepbrowseralive]
             cmd << " -coverage" if options[:coverage]
 
-            fail "Problems...oh noes!" unless system cmd
+            fail "Failed to run MUnit TestRunner!" unless system cmd
 
             Dir.chdir appwd
 
@@ -68,16 +57,27 @@ module Buildr
           tests
         end
 
+        def generate_test_suites
+          @generate ||= file task.project.path_to(:source, :test, :hx) do
+            create_munit_config
+            appwd = Dir.pwd
+            Dir.chdir task.project.base_dir
+            cmd = "haxelib run munit gen"
+            fail "Failed to generate MUnit Test Suite" unless system cmd
+            Dir.chdir appwd
+          end
+        end
+
         def create_munit_config
           file = File.join(task.project.base_dir, ".munit")
           puts "Creating munit config '#{file}'"
           File.open(file, 'w') { |f| f.write(
               "version=#{options[:version].nil? ? DEFAULT_VERSION : options[:version]}\n" +
-                  "src=#{task.project.path_to(:source, :test, :hx)}\n" +
-                  "bin=#{task.project.test.compile.target}\n" +
-                  "report=#{task.project.path_to(:reports, :munit)}\n" +
-                  "hxml=#{get_hxml_file}\n" +
-                  "classPaths=#{task.project.compile.sources.map(&:to_s).join(',')}"
+              "src=#{task.project.path_to(:source, :test, :hx)}\n" +
+              "bin=#{task.project.test.compile.target}\n" +
+              "report=#{task.project.path_to(:reports, :munit)}\n" +
+              "hxml=#{get_hxml_file}\n" +
+              "classPaths=#{task.project.compile.sources.map(&:to_s).join(',')}"
           ) }
         end
 
