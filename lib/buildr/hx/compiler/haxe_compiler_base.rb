@@ -27,7 +27,7 @@ module Buildr
             appwd = Dir.pwd
             Dir.chdir @project.base_dir
             file = File.join(@project.base_dir, options[:hxml] || is_test ? "test.hxml" : "compile.hxml")
-            fail("Compilation failed!") unless system "haxe '#{file}'"
+            fail("Compilation failed!") unless system "haxe \"#{file}\""
             Dir.chdir appwd
           end
         end
@@ -84,7 +84,7 @@ module Buildr
         end
 
         def install_haxelib_zip zip
-          system "haxelib test '#{zip}'"
+          system "haxelib test \"#{zip}\""
         end
 
         def is_test?(sources, target, dependencies)
