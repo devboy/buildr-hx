@@ -1,6 +1,7 @@
 require 'buildr'
 require 'fileutils'
 require "rexml/document"
+require "pathname"
 
 module Buildr
   module Haxe
@@ -12,7 +13,7 @@ module Buildr
 
         def initialize(test_task, options)
           super
-          @task.compile.from generate_test_suites
+          @task.compile.enhance [generate_test_suites]
         end
 
         def tests(dependencies) #:nodoc:
@@ -58,7 +59,8 @@ module Buildr
         end
 
         def generate_test_suites
-          @generate ||= file task.project.path_to(:source, :test, :hx) do
+          Rake::Task.define_task :generate_test_suites do
+            puts "Generating MUnit Test Suite"
             create_munit_config
             appwd = Dir.pwd
             Dir.chdir task.project.base_dir
@@ -69,22 +71,31 @@ module Buildr
         end
 
         def create_munit_config
-          file = File.join(task.project.base_dir, ".munit")
-          puts "Creating munit config '#{file}'"
+          file = get_munit_file()
+          puts "Generating MUnit configuration '#{file}'"
           File.open(file, 'w') { |f| f.write(
-              "version=#{options[:version].nil? ? DEFAULT_VERSION : options[:version]}\n" +
-              "src=#{task.project.path_to(:source, :test, :hx)}\n" +
-              "bin=#{task.project.test.compile.target}\n" +
-              "report=#{task.project.path_to(:reports, :munit)}\n" +
-              "hxml=#{get_hxml_file}\n" +
-              "classPaths=#{task.project.compile.sources.map(&:to_s).join(',')}"
+              <<-FILE
+version=#{options[:version].nil? ? DEFAULT_VERSION : options[:version]}
+src=#{relative_path task.project.path_to(:source, :test, :hx), @task.project.base_dir}
+bin=#{relative_path task.project.test.compile.target.to_s, @task.project.base_dir}
+report=#{relative_path task.project.path_to(:reports, :munit).to_s, @task.project.base_dir}
+hxml=#{relative_path get_hxml_file, @task.project.base_dir}
+classPaths=#{task.project.compile.sources.map(&:to_s).map{|s| relative_path s, @task.project.base_dir}.join(',')}
+              FILE
           ) }
         end
 
+        def get_munit_file
+          File.join(task.project.base_dir, ".munit")
+        end
+
         def get_hxml_file
-          file = "test.hxml"
-          file = task.project.test.compile.options[:hxml] unless task.project.test.compile.options[:hxml].nil?
+          file = task.compile.options[:hxml] || "test.hxml"
           File.join(task.project.base_dir, file)
+        end
+
+        def relative_path path, from
+          Pathname.new(path).relative_path_from(Pathname.new(from)).to_s
         end
 
       end
