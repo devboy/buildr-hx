@@ -9,11 +9,14 @@ module Buildr
 
       class MUnit < TestFramework::Haxe
 
-        DEFAULT_VERSION = "0.9.2.1"
+        DEFAULT_VERSION = "0.9.2.3"
 
         def initialize(test_task, options)
           super
-          @task.compile.enhance [generate_test_suites]
+          @task.compile.with @task.project.haxelib("munit:#{options.version||DEFAULT_VERSION}")
+          @task.compile.enhance [generate_munit_config]
+          @task.compile.from generate_test_suite
+          @task.project.clean.enhance [clean_files]
         end
 
         def tests(dependencies) #:nodoc:
@@ -41,6 +44,7 @@ module Buildr
             cmd << " -browser #{options[:browser]}" unless options[:browser].nil?
             cmd << " -keep-browser-alive" if options[:keepbrowseralive]
             cmd << " -coverage" if options[:coverage]
+            cmd << " -nogen"
 
             fail "Failed to run MUnit TestRunner!" unless system cmd
 
@@ -58,10 +62,22 @@ module Buildr
           tests
         end
 
-        def generate_test_suites
-          Rake::Task.define_task :generate_test_suites do
-            puts "Generating MUnit Test Suite"
-            create_munit_config
+        private
+
+        def clean_files
+          Rake::Task.define_task :clean_files do
+            rm_rf get_munit_file
+            rm_rf get_test_suite_file
+          end
+        end
+
+        def generate_files
+          Rake::Task.define_task :generate_files => [generate_munit_config, generate_test_suite]
+        end
+
+        def generate_test_suite
+          file get_test_suite_file => get_test_files do
+            puts "Generating MUnit Test Suite '#{get_test_suite_file}'"
             appwd = Dir.pwd
             Dir.chdir task.project.base_dir
             cmd = "haxelib run munit gen"
@@ -70,10 +86,10 @@ module Buildr
           end
         end
 
-        def create_munit_config
-          file = get_munit_file()
-          puts "Generating MUnit configuration '#{file}'"
-          File.open(file, 'w') { |f| f.write(
+        def generate_munit_config
+          file get_munit_file => get_test_files do
+            puts "Generating MUnit configuration '#{get_munit_file}'"
+            File.open(get_munit_file, 'w') { |f| f.write(
               <<-FILE
 version=#{options[:version].nil? ? DEFAULT_VERSION : options[:version]}
 src=#{relative_path task.project.path_to(:source, :test, :hx), @task.project.base_dir}
@@ -83,6 +99,15 @@ hxml=#{relative_path get_hxml_file, @task.project.base_dir}
 classPaths=#{task.project.compile.sources.map(&:to_s).map{|s| relative_path s, @task.project.base_dir}.join(',')}
               FILE
           ) }
+          end
+        end
+
+        def get_test_files
+          Dir.glob( @task.project._(:source,:test,:hx, "**/*Test.hx") )
+        end
+
+        def get_test_suite_file
+          task.project._(:source,:test,:hx,"TestSuite.hx")
         end
 
         def get_munit_file
