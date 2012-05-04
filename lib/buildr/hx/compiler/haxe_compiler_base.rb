@@ -16,7 +16,7 @@ module Buildr
           check_options options, COMPILE_OPTIONS
           @output = get_output_file(target)
           is_test = is_test?(sources, target, dependencies)
-          args = ["haxe"]
+          args = %w(haxe)
           sources += @project.compile.sources.map(&:to_s) if is_test
           args += generate_source_args sources
           args += generate_dependency_args dependencies
@@ -50,7 +50,7 @@ module Buildr
           args << '-debug' if options[:debug]
           args += options[:resources].map{|id,path| "-resource #{path}@#{id.to_s}"} unless options[:resources].nil?
           options[:flags] << "ENV_#{Buildr.environment.upcase}"
-          args += options[:flags].map{|flag| "-D #{flag.to_s}"} unless options[:flags].nil?
+          args += options[:flags].uniq.map{|flag| "-D #{flag.to_s}"} unless options[:flags].nil?
           args + Array(options[:args])
         end
 
@@ -64,19 +64,17 @@ module Buildr
             spec = HaxeLib.path_to_spec(dep)
             if spec
               args << "-lib #{spec[:id]}:#{spec[:version]}"
-              #elsif File.extname(dep) == ".zip" && Buildr.zip(dep).contain?("haxelib.xml")
-              #  xml = Zip::ZipFile.open(dep) { |zip| zip.file.read("haxelib.xml") }
-              #  require 'rexml/document'
-              #  doc = REXML::Document.new(xml)
-              #  id = doc.root.attribute("name")
-              #  version = doc.root.elements['version'].attribute("name")
-              #  fail "Could not install #{id}:#{version}." unless install_haxelib_zip dep
-              #  args << "-lib #{id}:#{version}"
             elsif File.extname(dep) == ".swf"
               args << "-swf-lib #{dep}"
             elsif File.extname(dep) == ".hxlib"
               args += File.read(dep).split("\n").map{ |dep|
-                dep.start_with?("-cp") ? "-cp #{File.join(root_project_dir, dep.gsub("-cp ", "").strip )}" : dep
+                if dep.start_with?("-cp")
+                  "-cp #{File.join(root_project_dir, dep.gsub("-cp ", "").strip )}"
+                elsif dep.start_with?("-swf-lib")
+                  "-swf-lib #{File.join(root_project_dir, dep.gsub("-swf-lib ", "").strip )}"
+                else
+                  dep
+                end
               }
             end
           }
@@ -101,7 +99,7 @@ module Buildr
         def create_hxml( args, is_test )
           file = File.join(@project.base_dir, options[:hxml] || is_test ? "test.hxml" : "compile.hxml")
           puts "Creating hxml '#{file}'"
-          with_path = ["cp", "swf-lib", "swf", "js", "as3", "cpp", "neko", "xml", "swf9", "resource"].map{|p|"-#{p}"}
+          with_path = %w(cp swf-lib swf js as3 cpp neko xml swf9 resource).map{|p|"-#{p}"}
           File.open(file, 'w') {|f| f.write(
               args.reject{|a| a == "haxe"}.
                   map{|a|

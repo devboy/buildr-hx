@@ -12,9 +12,15 @@ module Buildr
 
         def compile(sources, target, dependencies)
           dependency_list = (generate_dependency_args(dependencies) + generate_source_args(sources)).
-              reject{|dep| !( dep.start_with?("-cp") || dep.start_with?("-lib") ) }.
+              reject{|dep| !( dep.start_with?("-cp") || dep.start_with?("-lib") || dep.start_with?("-swf-lib") ) }.
               map{ |dep|
-                dep.start_with?("-cp") ? "-cp #{relative_path( dep.gsub("-cp ", "").strip, root_project_dir )}" : dep
+                if dep.start_with?("-cp")
+                  "-cp #{relative_path( dep.gsub("-cp ", "").strip, root_project_dir )}"
+                elsif dep.start_with?("-swf-lib")
+                  "-swf-lib #{relative_path( dep.gsub("-swf-lib ", "").strip, root_project_dir )}"
+                else
+                  dep
+                end
               }
           file = get_output_file(target)
           FileUtils.mkdir_p File.dirname(file)
