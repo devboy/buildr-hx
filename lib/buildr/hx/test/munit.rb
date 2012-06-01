@@ -97,6 +97,7 @@ bin=#{relative_path task.project.test.compile.target.to_s, @task.project.base_di
 report=#{relative_path task.project.path_to(:reports, :munit).to_s, @task.project.base_dir}
 hxml=#{relative_path get_hxml_file, @task.project.base_dir}
 classPaths=#{task.project.compile.sources.map(&:to_s).map{|s| relative_path s, @task.project.base_dir}.join(',')}
+resources=#{relative_path task.project.path_to(:source, :test, :resources), @task.project.base_dir}
               FILE
           ) }
           end
