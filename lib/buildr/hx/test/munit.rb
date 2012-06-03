@@ -89,17 +89,21 @@ module Buildr
         def generate_munit_config
           file get_munit_file => get_test_files do
             puts "Generating MUnit configuration '#{get_munit_file}'"
-            File.open(get_munit_file, 'w') { |f| f.write(
-              <<-FILE
-version=#{options[:version].nil? ? DEFAULT_VERSION : options[:version]}
-src=#{relative_path task.project.path_to(:source, :test, :hx), @task.project.base_dir}
-bin=#{relative_path task.project.test.compile.target.to_s, @task.project.base_dir}
-report=#{relative_path task.project.path_to(:reports, :munit).to_s, @task.project.base_dir}
-hxml=#{relative_path get_hxml_file, @task.project.base_dir}
-classPaths=#{task.project.compile.sources.map(&:to_s).map{|s| relative_path s, @task.project.base_dir}.join(',')}
-resources=#{relative_path task.project.path_to(:source, :test, :resources), @task.project.base_dir}
+            file_contents =  <<-FILE
+            version=#{options[:version].nil? ? DEFAULT_VERSION : options[:version]}
+            src=#{relative_path task.project.path_to(:source, :test, :hx), @task.project.base_dir}
+            bin=#{relative_path task.project.test.compile.target.to_s, @task.project.base_dir}
+            report=#{relative_path task.project.path_to(:reports, :munit).to_s, @task.project.base_dir}
+            hxml=#{relative_path get_hxml_file, @task.project.base_dir}
+            classPaths=#{task.project.compile.sources.map(&:to_s).map{|s| relative_path s, @task.project.base_dir}.join(',')}
+            FILE
+            test_resources = task.project.path_to(:source, :test, :resources)
+            if File.exists? test_resources and File.directory? test_resources
+              file_contents << <<-FILE
+              resources=#{relative_path test_resources, @task.project.base_dir}
               FILE
-          ) }
+            end
+            File.open(get_munit_file, 'w') { |f| f.write( file_contents ) }
           end
         end
 
